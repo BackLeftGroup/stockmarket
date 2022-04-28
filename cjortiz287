@@ -1,0 +1,49 @@
+def price():
+        col1, col2, col3 = st.columns(3)
+        polystocks_url2 = "https://api.polygon.io/v2/aggs/ticker/{}/" \
+                          "prev?adjusted=true&apiKey=WJtsWZ032pndm6sfV4BAUnbaoOL7ku6X".format(stock_ticker)
+        polyresponse2 = requests.get(polystocks_url2).json()
+        name = stockData["data"][0]["name"]
+        st.subheader(name + "'s Previous Day Closing Information")
+
+        if st.button('See Previous Closing Information'):
+            if polyresponse2["status"] == "OK":
+                closeprice = polyresponse2["results"][0]["c"]
+                highestprice = polyresponse2["results"][0]["h"]
+                lowestprice = polyresponse2["results"][0]["l"]
+                openprice = polyresponse2["results"][0]["o"]
+                ntrans = polyresponse2["results"][0]["n"]
+                volume = polyresponse2["results"][0]["v"]
+                st.metric(label=polyresponse2, value=float, delta=float, delta_color="normal")
+                with col1:
+
+                    st.write(name + "'s Opening Price")
+                    st.write(openprice)
+
+                    st.write(name + "'s Closing Price")
+                    st.write(closeprice)
+
+                    col1.metric(polyresponse2, float, float, "normal")
+
+
+                with col2:
+                    st.write(name + "'s Lowest Price")
+                    st.write(lowestprice)
+
+                    st.write(name + "'s Highest Price")
+                    st.write(highestprice)
+
+                    col2.metric(polyresponse2, float, float, "normal")
+
+                with col3:
+                    st.write(name + "'s Number of Transcation")
+                    st.write(ntrans)
+
+                    st.write(name + "'s Trading Volume")
+                    st.write(volume)
+
+
+                st.success("Information Successfully Loaded from API")
+            else:
+                st.error("No ticker found, please check input")
+
